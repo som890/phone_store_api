@@ -16,7 +16,6 @@ public class CorsConfig implements WebMvcConfigurer {
     private static final String DELETE_METHOD = "DELETE";
 
     @Override
-    @Bean
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
                 .allowedMethods(GET_METHOD, POST_METHOD, UPDATE_METHOD, DELETE_METHOD)

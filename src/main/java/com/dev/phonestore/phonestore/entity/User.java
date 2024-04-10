@@ -80,6 +80,10 @@ public class User {
         this.roles = roles;
     }
 
+    public Set<Role> getRoles() {
+        return roles;
+    }
+
     @Override
     public String toString() {
         return "User{" +

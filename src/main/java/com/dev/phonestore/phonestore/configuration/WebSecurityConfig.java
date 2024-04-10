@@ -4,6 +4,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -25,10 +27,10 @@ public class WebSecurityConfig {
     private UnAuthorizedAuthenticationEntryPoint authenticationEntryPoint;
 
     @Autowired
-    private SecurityFilter securityFilter;
+    private UserDetailsService userDetailsService;
 
     @Autowired
-    private UserDetailsService userDetailsService;
+    private SecurityFilter securityFilter;
 
     @Autowired
     private BCryptPasswordEncoder passwordEncoder;
@@ -45,14 +47,16 @@ public class WebSecurityConfig {
     //Lọc các yêu cầu web và áp dụng các quy tắc bảo mật
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception{
-        httpSecurity.cors(AbstractHttpConfigurer::disable);
+        httpSecurity.cors(AbstractHttpConfigurer::disable); // Ngăn chặn từ các domain khác
         httpSecurity.csrf(AbstractHttpConfigurer::disable); //Disabling CSRF as not using form based login
-        httpSecurity.authorizeHttpRequests(authorized -> authorized.requestMatchers("").permitAll()
-                .requestMatchers("").permitAll()
-                .requestMatchers("").permitAll()
+        httpSecurity.authorizeHttpRequests(authorized -> authorized.requestMatchers("*").permitAll()
+                .requestMatchers("*").permitAll()
+                .requestMatchers("*").permitAll()
                 .anyRequest().authenticated());
         httpSecurity.exceptionHandling(e -> e.authenticationEntryPoint(authenticationEntryPoint));
         httpSecurity.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+
+        //Thêm một lớp Filter kiểm tra JWT
         httpSecurity.addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class);
         return httpSecurity.build();
     }
