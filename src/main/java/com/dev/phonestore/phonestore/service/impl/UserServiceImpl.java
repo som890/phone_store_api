@@ -47,21 +47,6 @@ public class UserServiceImpl implements IUserService {
         adminUser.setRoles(adminListRole);
         userRepository.save(adminUser);
 
-        Role userRole = new Role();
-        userRole.setRoleName("User");
-        userRole.setRoleDescription("User role for web application");
-        roleRepository.save(userRole);
-
-
-        User user = new User();
-        user.setUserName("Nam123");
-        user.setUserFirstName("Nguyen");
-        user.setUserLastName("Nam");
-        user.setUserPassword("@0098LvSomnn@@");
-        Set<Role> userListRole = new HashSet<>();
-        userListRole.add(userRole);
-        user.setRoles(userListRole);
-        userRepository.save(user);
 
     }
 }

@@ -31,7 +31,7 @@ public class UserDetailServiceImpl implements UserDetailsService {
         );
     }
     public Set getAuthorized(User user) {
-        Set authorize = new HashSet();
+        Set authorize = new HashSet<>();
         user.getRoles().forEach(role -> authorize.add(new SimpleGrantedAuthority("ROLE_" + role.getRoleName())));
         return  authorize;
     }
