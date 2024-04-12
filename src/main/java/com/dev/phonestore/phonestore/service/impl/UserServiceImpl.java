@@ -7,6 +7,7 @@ import com.dev.phonestore.phonestore.repository.UserRepository;
 import com.dev.phonestore.phonestore.service.IUserService;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.beans.Transient;
@@ -14,7 +15,6 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Service
-
 public class UserServiceImpl implements IUserService {
 
     @Autowired
@@ -22,6 +22,10 @@ public class UserServiceImpl implements IUserService {
 
     @Autowired
     private RoleRepository roleRepository;
+
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     @Override
     public User createNewUser(User user) {
@@ -41,12 +45,15 @@ public class UserServiceImpl implements IUserService {
         adminUser.setUserName("Som890");
         adminUser.setUserFirstName("Lo");
         adminUser.setUserLastName("Som");
-        adminUser.setUserPassword("@0098LvSomnn@@");
+        adminUser.setUserPassword(getEncodedPassword("@0098LvSomnn@@"));
         Set<Role> adminListRole = new HashSet<>();
         adminListRole.add(adminRole);
         adminUser.setRoles(adminListRole);
         userRepository.save(adminUser);
 
 
+    }
+    public String getEncodedPassword(String password) {
+        return passwordEncoder.encode(password);
     }
 }

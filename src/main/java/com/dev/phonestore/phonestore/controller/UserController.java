@@ -20,16 +20,16 @@ public class UserController {
     }
 
     @PostMapping("/create")
-    public ResponseEntity<String> createNewUser(@RequestBody User user) {
-        ResponseEntity<String> responseEntity = null;
-        try{
+    public ResponseEntity < String > createNewUser(@RequestBody User user) {
+        ResponseEntity < String > responseEntity = null;
+        try {
             User newUser = userService.createNewUser(user);
-            responseEntity = new ResponseEntity<String>("User is created successfully", HttpStatus.CREATED);
-        }catch (Exception e) {
+            responseEntity = new ResponseEntity < String > ("User is created successfully", HttpStatus.CREATED);
+        } catch (Exception e) {
             e.printStackTrace();
-            responseEntity = new ResponseEntity<>("Unable to create new user", HttpStatus.INTERNAL_SERVER_ERROR);
+            responseEntity = new ResponseEntity < > ("Unable to create new user", HttpStatus.INTERNAL_SERVER_ERROR);
         }
-         return responseEntity;
+        return responseEntity;
     }
     @GetMapping("/adminPage")
     public String setupAdminPage() {
