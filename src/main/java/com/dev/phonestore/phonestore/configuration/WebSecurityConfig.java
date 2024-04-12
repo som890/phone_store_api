@@ -50,7 +50,7 @@ public class WebSecurityConfig {
     }
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity, AuthenticationManager authenticationManager) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
         httpSecurity
                 .csrf(AbstractHttpConfigurer::disable)
                 .cors(AbstractHttpConfigurer::disable)// Configure CORS here
@@ -59,16 +59,29 @@ public class WebSecurityConfig {
                         .anyRequest().authenticated())
                         .exceptionHandling(e -> e.authenticationEntryPoint(authenticationEntryPoint))
                         .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                        .authenticationManager(authenticationManager)
+                        .authenticationProvider(authenticationProvider())
                         .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class);
         return httpSecurity.build();
     }
+//    @Bean
+//    public AuthenticationManager authenticationManager(HttpSecurity httpSecurity)
+//            throws Exception {
+//       AuthenticationManagerBuilder authenticationManagerBuilder = httpSecurity.getSharedObject(AuthenticationManagerBuilder.class);
+//       authenticationManagerBuilder.userDetailsService(userDetailService).passwordEncoder(passwordEncoder);
+//       return authenticationManagerBuilder.build();
+//    }
+
     @Bean
-    public AuthenticationManager authenticationManager(HttpSecurity httpSecurity)
-            throws Exception {
-       AuthenticationManagerBuilder authenticationManagerBuilder = httpSecurity.getSharedObject(AuthenticationManagerBuilder.class);
-       authenticationManagerBuilder.userDetailsService(userDetailService).passwordEncoder(passwordEncoder);
-       return authenticationManagerBuilder.build();
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
+        return config.getAuthenticationManager();
+    }
+    @Bean
+    public AuthenticationProvider authenticationProvider() {
+        DaoAuthenticationProvider authenticationProvider = new DaoAuthenticationProvider();
+        authenticationProvider.setUserDetailsService(userDetailService);
+        authenticationProvider.setPasswordEncoder(passwordEncoder);
+        return authenticationProvider;
+
     }
 
 }
