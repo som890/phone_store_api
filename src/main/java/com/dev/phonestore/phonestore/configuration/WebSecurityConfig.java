@@ -56,6 +56,9 @@ public class WebSecurityConfig {
                 .cors(AbstractHttpConfigurer::disable)// Configure CORS here
                 .authorizeHttpRequests(authorized -> authorized
                         .requestMatchers(HttpMethod.POST,"/authenticate").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/user/register").permitAll()
+                        .requestMatchers(HttpMethod.GET,"/user/adminPage").permitAll()
+                        .requestMatchers(HttpMethod.GET,"/user/userPage").permitAll()
                         .anyRequest().authenticated())
                         .exceptionHandling(e -> e.authenticationEntryPoint(authenticationEntryPoint))
                         .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
@@ -63,13 +66,6 @@ public class WebSecurityConfig {
                         .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class);
         return httpSecurity.build();
     }
-//    @Bean
-//    public AuthenticationManager authenticationManager(HttpSecurity httpSecurity)
-//            throws Exception {
-//       AuthenticationManagerBuilder authenticationManagerBuilder = httpSecurity.getSharedObject(AuthenticationManagerBuilder.class);
-//       authenticationManagerBuilder.userDetailsService(userDetailService).passwordEncoder(passwordEncoder);
-//       return authenticationManagerBuilder.build();
-//    }
 
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
@@ -81,7 +77,6 @@ public class WebSecurityConfig {
         authenticationProvider.setUserDetailsService(userDetailService);
         authenticationProvider.setPasswordEncoder(passwordEncoder);
         return authenticationProvider;
-
     }
 
 }

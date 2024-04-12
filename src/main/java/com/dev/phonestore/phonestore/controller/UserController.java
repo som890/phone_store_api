@@ -1,6 +1,7 @@
 package com.dev.phonestore.phonestore.controller;
 
 import com.dev.phonestore.phonestore.entity.User;
+import com.dev.phonestore.phonestore.exception.RoleNotFoundException;
 import com.dev.phonestore.phonestore.service.IUserService;
 import jakarta.annotation.PostConstruct;
 import org.slf4j.Logger;
@@ -9,9 +10,13 @@ import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.net.http.HttpResponse;
+
 @RestController
+@RequestMapping("/user")
 public class UserController {
 
     private static final Logger logger = LoggerFactory.getLogger(UserController.class);
@@ -24,24 +29,28 @@ public class UserController {
         userService.initializeRolesAndUsers();
     }
 
-    @PostMapping("/create")
-    public ResponseEntity < String > createNewUser(@RequestBody User user) {
-        ResponseEntity < String > responseEntity = null;
+    @PostMapping("/register")
+    public ResponseEntity<User> registerNewUser(@RequestBody User user) {
+        ResponseEntity<String> responseEntity = null;
         try {
-            User newUser = userService.createNewUser(user);
-            responseEntity = new ResponseEntity < String > ("User is created successfully", HttpStatus.CREATED);
+            User newUser = userService.registerNewUser(user);
+            return ResponseEntity.status(HttpStatus.CREATED).body(newUser);
+        }catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+     }catch (RoleNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         } catch (Exception e) {
-           logger.error("Failed to create new user", e);
-            responseEntity = new ResponseEntity < > ("Unable to create new user", HttpStatus.INTERNAL_SERVER_ERROR);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
-        return responseEntity;
     }
 
     @GetMapping("/adminPage")
+    @PreAuthorize("hasRole('Admin')")
     public String setupAdminPage() {
         return "This URL is only accessible to admin";
     }
     @GetMapping("/userPage")
+    @PreAuthorize("hasRole('User')")
     public String setupUserPage() {
         return "This URL is only accessible to user";
     }
