@@ -15,6 +15,7 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -26,7 +27,7 @@ public class SecurityFilter extends OncePerRequestFilter {
     private static final Logger logger = LoggerFactory.getLogger(SecurityFilter.class);
 
     private JwtUtil jwtUtil;
-    private UserDetailServiceImpl userDetailService;
+    private  UserDetailsService userDetailService;
 
     @Autowired
     public void setJwtUtil(JwtUtil jwtUtil) {
@@ -34,7 +35,7 @@ public class SecurityFilter extends OncePerRequestFilter {
     }
 
     @Autowired
-    public void setUserDetailService(UserDetailServiceImpl userDetailService) {
+    public void setUserDetailService(UserDetailsService userDetailService) {
         this.userDetailService = userDetailService;
     }
     @Override

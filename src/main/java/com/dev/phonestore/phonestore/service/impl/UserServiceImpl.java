@@ -7,6 +7,8 @@ import com.dev.phonestore.phonestore.repository.RoleRepository;
 import com.dev.phonestore.phonestore.repository.UserRepository;
 import com.dev.phonestore.phonestore.service.IUserService;
 import jakarta.transaction.Transactional;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -17,6 +19,7 @@ import java.util.Set;
 
 @Service
 public class UserServiceImpl implements IUserService {
+    private static final Logger logger = LoggerFactory.getLogger(UserServiceImpl.class);
 
     @Autowired
     private UserRepository userRepository;
@@ -34,23 +37,31 @@ public class UserServiceImpl implements IUserService {
     }
 
     @Override
-    @Transactional
     public void initializeRolesAndUsers() {
 
         Role adminRole = new Role();
         adminRole.setRoleName("Admin");
-        adminRole.setRoleDescription("Admin role for web application");
+        adminRole.setRoleDescription("Admin role");
         roleRepository.save(adminRole);
+
+        Role userRole = new Role();
+        userRole.setRoleName("User");
+        userRole.setRoleDescription("User role");
+        roleRepository.save(userRole);
+
+        adminRole = roleRepository.findById(adminRole.getRoleId()).orElseThrow(() -> new RuntimeException("Admin not found"));
+        userRole = roleRepository.findById(userRole.getRoleId()).orElseThrow(() -> new RuntimeException("User not found"));
 
         User adminUser = new User();
         adminUser.setUserName("Som890");
         adminUser.setUserFirstName("Lo");
         adminUser.setUserLastName("Som");
-        adminUser.setUserPassword(getEncodedPassword("@0098LvSomnn@@"));
+        adminUser.setUserPassword(passwordEncoder.encode("@0098LvSomnn@@"));
         Set<Role> adminListRole = new HashSet<>();
         adminListRole.add(adminRole);
         adminUser.setRoles(adminListRole);
         userRepository.save(adminUser);
+        logger.info("Save User: {}", adminUser);
     }
 
     @Override
@@ -58,20 +69,15 @@ public class UserServiceImpl implements IUserService {
         if (user == null) {
             throw new IllegalArgumentException("User must not be null");
         }
-
         Optional<Role> roleOption = roleRepository.findByRoleName("User");
         Role role = roleOption.orElseThrow(() -> new RoleNotFoundException("Role not found"));
-
         Set<Role> roles = new HashSet<>();
         roles.add(role);
 
         user.setRoles(roles);
-        user.setUserPassword(getEncodedPassword(user.getUserPassword()));
+        user.setUserPassword(passwordEncoder.encode(user.getUserPassword()));
 
         return userRepository.save(user);
     }
 
-    public String getEncodedPassword(String password) {
-        return passwordEncoder.encode(password);
-    }
 }

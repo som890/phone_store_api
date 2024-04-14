@@ -1,5 +1,6 @@
 package com.dev.phonestore.phonestore.service;
 
+import com.dev.phonestore.phonestore.configuration.AuthenticationManagerProvider;
 import com.dev.phonestore.phonestore.entity.JwtRequest;
 import com.dev.phonestore.phonestore.entity.JwtResponse;
 import com.dev.phonestore.phonestore.entity.User;
@@ -29,23 +30,15 @@ public class UserDetailServiceImpl implements UserDetailsService {
 
     private static final Logger logger = LoggerFactory.getLogger(UserDetailServiceImpl.class);
 
-    private UserRepository userRepository;
-    private JwtUtil jwtUtil;
-    private AuthenticationManager authenticationManager;
+    private final UserRepository userRepository;
+    private final JwtUtil jwtUtil;
+    private final AuthenticationManagerProvider authenticationManagerProvider;
 
     @Autowired
-    public void setUserRepository(UserRepository userRepository) {
+    public UserDetailServiceImpl(UserRepository userRepository, JwtUtil jwtUtil, AuthenticationManagerProvider authenticationManagerProvider) {
         this.userRepository = userRepository;
-    }
-
-    @Autowired
-    public void setJwtUtil(JwtUtil jwtUtil) {
         this.jwtUtil = jwtUtil;
-    }
-
-    @Autowired
-    public void setAuthenticationManager(@Lazy AuthenticationManager authenticationManager) {
-        this.authenticationManager = authenticationManager;
+        this.authenticationManagerProvider = authenticationManagerProvider;
     }
 
     public JwtResponse createJwtToken(JwtRequest jwtRequest) throws Exception {
@@ -85,7 +78,7 @@ public class UserDetailServiceImpl implements UserDetailsService {
 
     private void authenticate(String userName, String userPassword) throws Exception {
         try {
-            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(userName, userPassword));
+            authenticationManagerProvider.authenticationManager().authenticate(new UsernamePasswordAuthenticationToken(userName, userPassword));
         } catch (DisabledException e) {
             throw new Exception("User is disabled");
         } catch (BadCredentialsException e) {

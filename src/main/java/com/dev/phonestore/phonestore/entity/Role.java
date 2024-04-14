@@ -1,9 +1,9 @@
 package com.dev.phonestore.phonestore.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
+
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 public class Role {
@@ -13,12 +13,14 @@ public class Role {
     private String roleName;
     private String roleDescription;
 
+
     public Role() {}
 
     public Role(Integer roleId, String roleName, String roleDescription) {
         this.roleId = roleId;
         this.roleName = roleName;
         this.roleDescription = roleDescription;
+
     }
 
     public Integer getRoleId() {
