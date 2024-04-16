@@ -8,8 +8,6 @@ import java.util.Set;
 @Table(name = "user")
 public class User {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Integer userId;
     private String userName;
     private String userFirstName;
     private String userLastName;
@@ -26,23 +24,6 @@ public class User {
     )
     private Set<Role> roles;
     public User() {}
-
-    public User(Integer userId, String userName, String userFirstName, String userLastName, String userPassword, Set<Role> roles) {
-        this.userId = userId;
-        this.userName = userName;
-        this.userFirstName = userFirstName;
-        this.userLastName = userLastName;
-        this.userPassword = userPassword;
-        this.roles = roles;
-    }
-
-    public Integer getUserId() {
-        return userId;
-    }
-
-    public void setUserId(Integer userId) {
-        this.userId = userId;
-    }
 
     public String getUserName() {
         return userName;
@@ -87,7 +68,6 @@ public class User {
     @Override
     public String toString() {
         return "User{" +
-                "userId='" + userId + '\'' +
                 ", userName='" + userName + '\'' +
                 ", userFirstName='" + userFirstName + '\'' +
                 ", userLastName='" + userLastName + '\'' +

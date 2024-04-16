@@ -9,16 +9,15 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @Configuration
 @EnableWebMvc
 public class CorsConfig implements WebMvcConfigurer {
-
-    private static final String GET_METHOD = "GET";
-    private static final String POST_METHOD = "POST";
-    private static final String UPDATE_METHOD = "PUT";
-    private static final String DELETE_METHOD = "DELETE";
+    private static final String GET = "GET";
+    private static final String POST = "POST";
+    private static final String PUT = "PUT";
+    private static final String DELETE = "DELETE";
 
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
-                .allowedMethods(GET_METHOD, POST_METHOD, UPDATE_METHOD, DELETE_METHOD)
+                .allowedMethods(GET, POST, PUT, DELETE)
                 .allowedHeaders("*")
                 .allowedOriginPatterns("*")
                 .allowCredentials(true);

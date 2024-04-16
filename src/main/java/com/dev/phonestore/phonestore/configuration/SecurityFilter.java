@@ -26,6 +26,9 @@ import java.io.IOException;
 public class SecurityFilter extends OncePerRequestFilter {
     private static final Logger logger = LoggerFactory.getLogger(SecurityFilter.class);
 
+    private static final String HEADER = "Authorization";
+    private static final String FREFIX = "Bearer ";
+
     private JwtUtil jwtUtil;
     private  UserDetailsService userDetailService;
 
@@ -41,7 +44,7 @@ public class SecurityFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(@NonNull HttpServletRequest request, @NonNull HttpServletResponse response, @NonNull FilterChain filterChain) throws ServletException, IOException {
 
-        String token = getJwtFromRequest(request);
+        String token = getToken(request);
         String username = null;
 
         if (token != null && SecurityContextHolder.getContext().getAuthentication() == null) {
@@ -55,14 +58,12 @@ public class SecurityFilter extends OncePerRequestFilter {
                 }
             }
         }
-
         filterChain.doFilter(request, response);
-
     }
 
-    private String getJwtFromRequest(HttpServletRequest request) {
-        String authHeader = request.getHeader("Authorization");
-        if (authHeader != null && authHeader.startsWith("Bearer ")) {
+    private String getToken(HttpServletRequest request) {
+        String authHeader = request.getHeader(HEADER);
+        if (authHeader != null && authHeader.startsWith(FREFIX)) {
             return authHeader.substring(7);
         }
         return null;

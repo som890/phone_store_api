@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.*;
 import java.net.http.HttpResponse;
 
 @RestController
-@RequestMapping("/user")
 public class UserController {
 
     private static final Logger logger = LoggerFactory.getLogger(UserController.class);
@@ -44,14 +43,15 @@ public class UserController {
         }
     }
 
-    @GetMapping("/adminPage")
+    @GetMapping({"/forAdmin"})
     @PreAuthorize("hasRole('Admin')")
-    public String setupAdminPage() {
-        return "This URL is only accessible to admin";
+    public String adminAccess(){
+        return "This URL is only accessible to the admin";
     }
-    @GetMapping("/userPage")
+
+    @GetMapping({"/forUser"})
     @PreAuthorize("hasRole('User')")
-    public String setupUserPage() {
-        return "This URL is only accessible to user";
+    public String userAccess(){
+        return "This URL is only accessible to the user";
     }
 }

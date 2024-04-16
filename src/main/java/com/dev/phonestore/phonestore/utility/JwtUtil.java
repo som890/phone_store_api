@@ -12,9 +12,6 @@ import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
 import java.nio.file.AccessDeniedException;
-import java.security.Key;
-import java.security.SecureRandom;
-import java.util.Base64;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -27,47 +24,27 @@ public class JwtUtil {
 
     private static final Logger logger = LoggerFactory.getLogger(JwtUtil.class);
 
-    private static final byte[] SECRET_KEY_BYTES = generateSecretKey();
-    private static final String SECRET_KEY = Base64.getUrlEncoder().encodeToString(SECRET_KEY_BYTES);
+    private static final String SECRET_KEY = "learnprogrammingyourselfdsfsidfhsdf53245523874523ikowsefhdnksdgnsldkfslkdfjskldgnsdfjsdgju43905345345klj5mk345lgd5644534";
     private static final int TOKEN_VALIDITY_SECONDS = 3600 * 5;
 
-    private static byte[] generateSecretKey() {
-        byte[] keyBytes = new byte[32]; // 32 bytes for 256-bit key
-        new SecureRandom().nextBytes(keyBytes);
-        return keyBytes;
-    }
     //Get user from jwt
     public String getUsernameFromToken(String token) {
-        try {
-            if(isValidJwtFormat(token))
-                return getClaimsFromToken(token, Claims::getSubject);
-            else {
-                logger.error("Invalid JWT format");
-                return null;
-            }
-        }catch (Exception e) {
-            return  null;
-        }
-
-    }
-    private boolean isValidJwtFormat(String token){
-        String[] part = token.split("\\.");
-        return part.length == 3;
+                return extractClaimsFromToken(token, Claims::getSubject);
     }
 
-    private <T> T getClaimsFromToken(String token, Function < Claims, T> claimsResolver) {
+    private <T> T extractClaimsFromToken(String token, Function < Claims, T> claimsResolver) {
         try {
-            Claims claims = getAllClaims(token);
+            Claims claims = extractAllClaims(token);
             return claimsResolver.apply(claims);
         }catch (Exception e) {
             return  null;
         }
     }
 
-    public Claims getAllClaims(String token) throws AccessDeniedException {
+    public Claims extractAllClaims(String token) throws AccessDeniedException {
         try {
             return  Jwts.parser()
-                    .verifyWith(getSignInKey())
+                    .verifyWith(generateHS512Key())
                     .build()
                     .parseSignedClaims(token)
                     .getPayload();
@@ -76,10 +53,7 @@ public class JwtUtil {
         }
     }
 
-    private SecretKey getSignInKey() {
-        byte[] keyBytes = Decoders.BASE64.decode(SECRET_KEY);
-        return Keys.hmacShaKeyFor(keyBytes);
-    }
+
     public boolean validateToken(String token, UserDetails userDetails) {
         String userName = getUsernameFromToken(token);
         return (userName.equals(userDetails.getUsername()) && !isTokenExpired(token));
@@ -89,22 +63,35 @@ public class JwtUtil {
         return expirationDate.before(new Date());
     }
     public Date getExpirationDateFromToken(String token) {
-        return getClaimsFromToken(token, Claims::getExpiration);
+        return extractClaimsFromToken(token, Claims::getExpiration);
     }
 
+
+    private static SecretKey generateHS512Key() {
+        // Assuming SECRET_KEY stores in regular Base64 format
+        byte[] keyBytes = Decoders.BASE64.decode(SECRET_KEY);
+        int minimumKeyLength = Jwts.SIG.HS256.getKeyBitLength();
+        String usedAlgorithm = "HS256";
+        try {
+            return Keys.hmacShaKeyFor(keyBytes);
+        } catch (IllegalArgumentException e) {
+            System.err.println("Error: The key size is not enough for the algorithm " + usedAlgorithm + ". Details: " + e.getMessage());
+            return null;
+        }
+    }
     public String generateToken(UserDetails userDetails) {
         Map < String, Object > claims = new HashMap < > ();
         return createToken(claims, userDetails.getUsername());
     }
 
-    private String createToken(Map < String, Object > claims, String subject) {
-        Key key = Keys.hmacShaKeyFor(SECRET_KEY.getBytes());
+    private static String createToken(Map<String, Object> claims, String subject) {
+        // Ensure minimum 256-bit key size for security
         return Jwts.builder()
                 .claims(claims)
                 .subject(subject)
                 .issuedAt(new Date(System.currentTimeMillis()))
                 .expiration(new Date(System.currentTimeMillis() + TOKEN_VALIDITY_SECONDS * 1000))
-                .signWith(key)
+                .signWith(generateHS512Key(), Jwts.SIG.HS512)
                 .compact();
     }
 

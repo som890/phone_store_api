@@ -32,11 +32,6 @@ public class UserServiceImpl implements IUserService {
     private PasswordEncoder passwordEncoder;
 
     @Override
-    public User createNewUser(User user) {
-        return userRepository.save(user);
-    }
-
-    @Override
     public void initializeRolesAndUsers() {
 
         Role adminRole = new Role();
@@ -48,9 +43,6 @@ public class UserServiceImpl implements IUserService {
         userRole.setRoleName("User");
         userRole.setRoleDescription("User role");
         roleRepository.save(userRole);
-
-        adminRole = roleRepository.findById(adminRole.getRoleId()).orElseThrow(() -> new RuntimeException("Admin not found"));
-        userRole = roleRepository.findById(userRole.getRoleId()).orElseThrow(() -> new RuntimeException("User not found"));
 
         User adminUser = new User();
         adminUser.setUserName("Som890");
@@ -69,14 +61,12 @@ public class UserServiceImpl implements IUserService {
         if (user == null) {
             throw new IllegalArgumentException("User must not be null");
         }
-        Optional<Role> roleOption = roleRepository.findByRoleName("User");
+        Optional<Role> roleOption = roleRepository.findById("User");
         Role role = roleOption.orElseThrow(() -> new RoleNotFoundException("Role not found"));
         Set<Role> roles = new HashSet<>();
         roles.add(role);
-
         user.setRoles(roles);
         user.setUserPassword(passwordEncoder.encode(user.getUserPassword()));
-
         return userRepository.save(user);
     }
 

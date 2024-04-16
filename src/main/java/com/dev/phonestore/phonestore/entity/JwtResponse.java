@@ -2,14 +2,14 @@ package com.dev.phonestore.phonestore.entity;
 
 public class JwtResponse {
     private User user;
-    private String jwtToken;
+    private String token;
 
     public JwtResponse() {
     }
 
-    public JwtResponse(User user, String jwtToken) {
+    public JwtResponse(User user, String token) {
         this.user = user;
-        this.jwtToken = jwtToken;
+        this.token = token;
     }
 
     public User getUser() {
@@ -20,11 +20,11 @@ public class JwtResponse {
         this.user = user;
     }
 
-    public String getJwtToken() {
-        return jwtToken;
+    public String getToken() {
+        return token;
     }
 
-    public void setJwtToken(String jwtToken) {
-        this.jwtToken = jwtToken;
+    public void setToken(String jwtToken) {
+        this.token = token;
     }
 }

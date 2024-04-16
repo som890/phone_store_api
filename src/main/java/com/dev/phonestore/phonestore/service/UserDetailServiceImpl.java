@@ -51,27 +51,28 @@ public class UserDetailServiceImpl implements UserDetailsService {
         authenticate(userName, userPassword);
         final UserDetails userDetails = loadUserByUsername(userName);
         String newGeneratedToken = jwtUtil.generateToken(userDetails);
-        User user = userRepository.findByUserName(userName);
+
+        User user = userRepository.findById(userName).get();
         return new JwtResponse(user, newGeneratedToken);
     }
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         logger.debug("Entering in loadUSerByUsername.....");
-        User user = userRepository.findByUserName(username);
+        User user = userRepository.findById(username).get();
         if (user != null) {
             return new org.springframework.security.core.userdetails.User(
                     user.getUserName(),
                     user.getUserPassword(),
                     getAuthorized(user));
-        } else {
+        }else {
             logger.error("Username not found: {}", username);
             throw new UsernameNotFoundException("Username is not valid");
         }
     }
 
-    private Set < GrantedAuthority > getAuthorized(User user) {
-        Set < GrantedAuthority > authorities = new HashSet < > ();
+    private Set getAuthorized(User user) {
+        Set < SimpleGrantedAuthority > authorities = new HashSet < > ();
         user.getRoles().forEach(role -> authorities.add(new SimpleGrantedAuthority("ROLE_" + role.getRoleName())));
         return authorities;
     }

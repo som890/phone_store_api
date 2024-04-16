@@ -56,8 +56,7 @@ public class WebSecurityConfig {
                 .exceptionHandling(e -> e.authenticationEntryPoint(authenticationEntryPoint))//
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))// Configure CORS here
                 .authorizeHttpRequests(authorized -> authorized
-                        .requestMatchers("/authenticate").permitAll()
-                        .requestMatchers("/user/register").permitAll()
+                        .requestMatchers("/authenticate","/register").permitAll()
                         .anyRequest().authenticated())
                         .authenticationProvider(authenticationProvider())
                         .authenticationManager(authenticationManagerProvider.authenticationManager())
