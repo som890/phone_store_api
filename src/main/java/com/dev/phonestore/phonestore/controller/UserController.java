@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import java.net.http.HttpResponse;
 
 @RestController
+@CrossOrigin(origins = "http://localhost:4200")
 public class UserController {
 
     private static final Logger logger = LoggerFactory.getLogger(UserController.class);
@@ -43,15 +44,15 @@ public class UserController {
         }
     }
 
-    @GetMapping({"/forAdmin"})
+    @GetMapping("/forAdmin")
     @PreAuthorize("hasRole('Admin')")
-    public String adminAccess(){
+    public String forAdmin(){
         return "This URL is only accessible to the admin";
     }
 
-    @GetMapping({"/forUser"})
+    @GetMapping("/forUser")
     @PreAuthorize("hasRole('User')")
-    public String userAccess(){
+    public String forUser(){
         return "This URL is only accessible to the user";
     }
 }
