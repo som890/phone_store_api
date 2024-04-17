@@ -1,9 +1,8 @@
 package com.dev.phonestore.phonestore.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
+
+import java.util.Set;
 
 @Entity
 public class Phone {
@@ -14,6 +13,17 @@ public class Phone {
     private String phoneDescription;
     private Double phoneDiscountedPrice;
     private Double phoneActualPrice;
+
+    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JoinTable(name = "phone_image",
+            joinColumns = {
+                    @JoinColumn(name = "phone_id")
+            },
+            inverseJoinColumns = {
+                    @JoinColumn(name = "image_id")
+            }
+    )
+    private Set<ImageModel> phoneImageSet;
 
     public Integer getPhoneId() {
         return phoneId;
@@ -53,5 +63,13 @@ public class Phone {
 
     public void setPhoneDescription(String phoneDescription) {
         this.phoneDescription = phoneDescription;
+    }
+
+    public Set<ImageModel> getPhoneImageSet() {
+        return phoneImageSet;
+    }
+
+    public void setPhoneImageSet(Set<ImageModel> phoneImageSet) {
+        this.phoneImageSet = phoneImageSet;
     }
 }
