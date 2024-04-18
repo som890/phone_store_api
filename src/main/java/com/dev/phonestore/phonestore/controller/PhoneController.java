@@ -23,21 +23,22 @@ public class PhoneController {
     @PreAuthorize("hasRole('Admin')")
     @PostMapping(value = {"/phone/add"}, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public Phone addNewPhone(@RequestPart("phone") Phone phone,
-                             @RequestPart("imageFile")MultipartFile[] file) {
+                             @RequestPart("imageFile") MultipartFile[] file) {
 
         try {
             Set<ImageModel> images = uploadImage(file);
             phone.setPhoneImageSet(images);
             return phoneService.addNewPhone(phone);
-        }catch (Exception e) {
+        } catch (Exception e) {
             System.out.println(e.getMessage());
             return null;
         }
     }
+
     public Set<ImageModel> uploadImage(MultipartFile[] files) throws IOException {
         Set<ImageModel> imageModelSet = new HashSet<>();
 
-        for (MultipartFile file: files) {
+        for (MultipartFile file : files) {
             ImageModel imageModel = new ImageModel(
                     file.getOriginalFilename(),
                     file.getContentType(),
@@ -47,15 +48,23 @@ public class PhoneController {
         }
         return imageModelSet;
     }
+
+    @PreAuthorize("hasRole('Admin')")
+    @GetMapping("/getPhoneDetailsById/{phoneId}")
+    public Phone getPhoneDetailsById(@PathVariable("phoneId") Integer phoneId) {
+        return phoneService.getPhoneDetailsById(phoneId);
+    }
+
+    @PreAuthorize("hasRole('Admin')")
     @GetMapping("/phone/get")
     public List<Phone> getAllPhone() {
         return phoneService.getAllPhone();
     }
+
     @DeleteMapping("/phone/delete/{phoneId}")
-    public void deletePhone(@PathVariable("phoneId") Integer phoneId)  {
+    public void deletePhone(@PathVariable("phoneId") Integer phoneId) {
         phoneService.deletePhone(phoneId);
     }
-
 
 
 }
