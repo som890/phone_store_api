@@ -10,6 +10,7 @@ public class Phone {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer phoneId;
     private String phoneName;
+    @Column(length = 2000)
     private String phoneDescription;
     private Double phoneDiscountedPrice;
     private Double phoneActualPrice;

@@ -49,18 +49,19 @@ public class PhoneController {
         return imageModelSet;
     }
 
-    @PreAuthorize("hasRole('Admin')")
+
     @GetMapping("/getPhoneDetailsById/{phoneId}")
     public Phone getPhoneDetailsById(@PathVariable("phoneId") Integer phoneId) {
         return phoneService.getPhoneDetailsById(phoneId);
     }
 
-    @PreAuthorize("hasRole('Admin')")
+
     @GetMapping("/phone/get")
     public List<Phone> getAllPhone() {
         return phoneService.getAllPhone();
     }
 
+    @PreAuthorize("hasRole('Admin')")
     @DeleteMapping("/phone/delete/{phoneId}")
     public void deletePhone(@PathVariable("phoneId") Integer phoneId) {
         phoneService.deletePhone(phoneId);

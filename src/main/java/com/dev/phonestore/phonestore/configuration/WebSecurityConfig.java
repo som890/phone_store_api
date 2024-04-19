@@ -57,7 +57,7 @@ public class WebSecurityConfig {
                 .exceptionHandling(e -> e.authenticationEntryPoint(authenticationEntryPoint))
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authorized -> authorized
-                        .requestMatchers("/authenticate","/register").permitAll()
+                        .requestMatchers("/authenticate","/register","/phone/get","/getPhoneDetailsById/{phoneId}").permitAll()
                         .anyRequest().authenticated())
                         .authenticationProvider(authenticationProvider())
                         .authenticationManager(authenticationManagerProvider.authenticationManager())
