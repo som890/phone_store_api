@@ -67,5 +67,10 @@ public class PhoneController {
         phoneService.deletePhone(phoneId);
     }
 
+    @PreAuthorize("hasRole('User')")
+    @GetMapping("/getPhoneDetails/{isSinglePhoneCheckOut}/{phoneId}")
+    public List<Phone> getPhoneDetails(@PathVariable(name ="isSinglePhoneCheckOut") boolean isSinglePhoneCheckOut,@PathVariable(name = "phoneId") Integer phoneId){
+        return phoneService.getPhoneDetails(isSinglePhoneCheckOut,phoneId);
+    }
 
 }

@@ -11,7 +11,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -24,6 +23,7 @@ import java.io.IOException;
 
 @Component
 public class SecurityFilter extends OncePerRequestFilter {
+    public static String CURRENT_USER = "";
     private static final Logger logger = LoggerFactory.getLogger(SecurityFilter.class);
 
     private static final String HEADER = "Authorization";
@@ -49,6 +49,7 @@ public class SecurityFilter extends OncePerRequestFilter {
 
         if (token != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             username = jwtUtil.getUsernameFromToken(token);
+            CURRENT_USER = username;
             if (username != null) {
                 UserDetails userDetails = userDetailService.loadUserByUsername(username);
                 if (jwtUtil.validateToken(token, userDetails)) {
