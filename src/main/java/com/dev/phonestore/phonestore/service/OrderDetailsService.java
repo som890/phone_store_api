@@ -27,30 +27,34 @@ public class OrderDetailsService {
     public void placeOrder(OrderInput orderInput) {
         List<OrderQuantity> orderInputList = orderInput.getOrderQuantityList();
 
-        for(OrderQuantity o: orderInputList) {
-            Optional<Phone> optionalPhone = phoneRepository.findById(o.getPhoneId());
-            Phone phone = null;
-            if(optionalPhone.isPresent()) {
-                phone = optionalPhone.get();
-            }
-            String username = SecurityFilter.CURRENT_USER;
+        if (orderInputList != null) {
+            for (OrderQuantity o : orderInputList) {
+                Optional<Phone> optionalPhone = phoneRepository.findById(o.getPhoneId());
+                Phone phone = null;
+                if (optionalPhone.isPresent()) {
+                    phone = optionalPhone.get();
+                }
+                String username = SecurityFilter.CURRENT_USER;
 
-            User user =null;
-            Optional<User> optionalUser = userRepository.findById(username);
-            if(optionalUser.isPresent()) {
-                user = optionalUser.get();
+                User user = null;
+                Optional<User> optionalUser = userRepository.findById(username);
+                if (optionalUser.isPresent()) {
+                    user = optionalUser.get();
+                }
+                OrderDetails orderDetails = new OrderDetails(
+                        orderInput.getOrderFullName(),
+                        orderInput.getOrderFullAddress(),
+                        orderInput.getOrderContactNumber(),
+                        orderInput.getOrderAlternateNumber(),
+                        (phone != null ? phone.getPhoneActualPrice() : null) *o.getQuantity(),
+                        user,
+                        phone,
+                        ORDER_STATUS
+                );
+                orderDetailsRepository.save(orderDetails);
             }
-            OrderDetails orderDetails = new OrderDetails(
-                    orderInput.getOrderFullName(),
-                    orderInput.getOrderFullAddress(),
-                    orderInput.getOrderContactNumber(),
-                    orderInput.getOrderAlternateNumber(),
-                     100.02,
-                    user,
-                    phone,
-                   ORDER_STATUS
-            );
-            orderDetailsRepository.save(orderDetails);
+        } else {
+            System.out.println("Order  input list is null!");
         }
     }
 
