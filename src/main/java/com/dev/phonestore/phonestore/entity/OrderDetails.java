@@ -12,20 +12,20 @@ public class OrderDetails {
     private String orderContactNumber;
     private String orderAlternateContactNumber;
     private String orderStatus;
-    private Double orderAmout;
-    @OneToOne
+    private Double orderAmount;
+    @OneToOne(cascade = CascadeType.ALL)
     private Phone phone;
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL)
     private User user;
 
     public OrderDetails(){}
 
-    public OrderDetails(String orderFullName, String orderFullAddress, String orderContactNumber, String orderAlternateContactNumber, Double orderAmout, User user, Phone phone, String orderStatus) {
+    public OrderDetails(String orderFullName, String orderFullAddress, String orderContactNumber, String orderAlternateContactNumber, Double orderAmount, User user, Phone phone, String orderStatus) {
         this.orderFullName = orderFullName;
         this.orderFullAddress = orderFullAddress;
         this.orderContactNumber = orderContactNumber;
         this.orderAlternateContactNumber = orderAlternateContactNumber;
-        this.orderAmout = orderAmout;
+        this.orderAmount = orderAmount;
         this.user = user;
         this.phone = phone;
         this.orderStatus = orderStatus;
@@ -79,12 +79,12 @@ public class OrderDetails {
         this.orderStatus = orderStatus;
     }
 
-    public Double getOrderAmout() {
-        return orderAmout;
+    public Double getOrderAmount() {
+        return orderAmount;
     }
 
-    public void setOrderAmout(Double orderAmout) {
-        this.orderAmout = orderAmout;
+    public void setOrderAmount(Double orderAmount) {
+        this.orderAmount = orderAmount;
     }
 
     public Phone getPhone() {
